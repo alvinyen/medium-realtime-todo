@@ -1,12 +1,5 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-
-class App extends Component {
-    render() {
-        return (
-            <h1>medium-realtime-todo</h1>
-        );
-    }
-}
+import App from './containers/App.jsx';
 
 ReactDOM.render(<App />, document.getElementById('root'));
