@@ -16,5 +16,9 @@ app.use(webpackDevMiddleware(webpack(webpackConfig)));
 app.use(bodyParser.urlencoded({ extend: true }));
 
 // socket-io set up
+const io = socketIo(server);
+io.on('connection', (socket) => {
+  console.log(`${socket.id} is connecting`);
+});
 
 server.listen(3000);
