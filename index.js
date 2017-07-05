@@ -2,6 +2,10 @@ const express = require('express');
 const http = require('http');
 const bodyParser = require('body-parser');
 
+const mongoose = require('mongoose');
+const TodoModel = require('./models/todoModel');
+const dbConnectionString = require('./config/config').dbConnectionString;
+
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackConfig = require('./webpack.config');
@@ -14,8 +18,25 @@ const server = http.createServer(app);
 app.use(express.static(`${__dirname}/public`)); // serve static file
 app.use(webpackDevMiddleware(webpack(webpackConfig)));
 app.use(bodyParser.urlencoded({ extend: true }));
+app.use(bodyParser.json());
 
-// socket-io set up
+// mongo db, mongoose set up
+mongoose.connect(dbConnectionString);
+const db = mongoose.connection;
+db.on('error', () => { console.log('failed to connect to mongo db'); });
+db.once('open', () => { console.log('connect to mongo db'); });
+new TodoModel({
+  id: 0,
+  title: 'test1',
+  completed: false,
+}).save((err, result) => {
+  if (err) { console.log('add new todo entity to mongo failed ', err); }
+  else {
+    console.log('add new todo entity to mongo successed！！ ');
+  }
+});
+
+// socket-io set up 
 const io = socketIo(server);
 io.on('connection', (socket) => {
   console.log(`${socket.id} is connecting`);
