@@ -25,21 +25,33 @@ mongoose.connect(dbConnectionString);
 const db = mongoose.connection;
 db.on('error', () => { console.log('failed to connect to mongo db'); });
 db.once('open', () => { console.log('connect to mongo db'); });
-new TodoModel({
-  id: 0,
-  title: 'test1',
-  completed: false,
-}).save((err, result) => {
-  if (err) { console.log('add new todo entity to mongo failed ', err); }
-  else {
-    console.log('add new todo entity to mongo successed！！ ');
-  }
-});
+// // test new todoitem save
+// new TodoModel({
+//   id: 2,
+//   title: 'test3',
+//   completed: false,
+// }).save((err, result) => {
+//   if (err) { console.log('add new todo entity to mongo failed ', err); return;}
+//   else {
+//     console.log('add new todo entity to mongo successed！！ ');
+//   }
+// });
+//
+// // test query todos in mongo db        // resultArray 為 陣列
+// const cursor = TodoModel.find({}, (err, resultArray) => {
+//   if (err) { console.log('query data failed'); return; }
+//   console.log(resultArray[0]);
+// });
 
-// socket-io set up 
+// socket-io set up
 const io = socketIo(server);
 io.on('connection', (socket) => {
   console.log(`${socket.id} is connecting`);
+  TodoModel.find({}, (err, resultArray) => {
+    if (err) { console.log('query data failed'); return; }
+    io.sockets.emit('initialList', resultArray);
+  });
+
   socket.on('disconnect', () => {
     console.log(`${socket.id} disconnected`);
   });

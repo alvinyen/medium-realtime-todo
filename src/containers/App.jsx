@@ -30,12 +30,14 @@ class App extends Component {
     todos: []
   };
 
-  componentWillMount = () => {
-    this.setState({ todos: todosData });
-  }
   componentDidMount = () => {
     this.socket = io('/');
+    this.socket.on('initialList', (resultArray) => {
+      // console.log(resultArray);
+      this.setState({ todos: resultArray });
+    });
   }
+  
   componentWillUnmount = () => {
     // console.log('Disconnecting Socket as component will unmount');
     // alert('Disconnecting Socket as component will unmount');
