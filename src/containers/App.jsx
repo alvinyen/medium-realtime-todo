@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import io from 'socket.io-client';
 
-import { MuiThemeProvider } from 'material-ui/styles';
+import { loadInitialDataSocket } from './../redux/actions/todos';
+
 import { Divider, TextField, RaisedButton } from 'material-ui';
 import { List, ListItem } from 'material-ui/List';
 
@@ -32,10 +34,11 @@ class App extends Component {
 
   componentDidMount = () => {
     this.socket = io('/');
-    this.socket.on('initialList', (resultArray) => {
-      // console.log(resultArray);
-      this.setState({ todos: resultArray });
-    });
+    this.props.dispatch(loadInitialDataSocket(this.socket));
+    // this.socket.on('initialList', (resultArray) => {
+    //   // console.log(resultArray);
+    //   this.setState({ todos: resultArray });
+    // });
   }
   
   componentWillUnmount = () => {
@@ -75,14 +78,15 @@ class App extends Component {
         todos[index] = todo;
         this.setState({ todos });
       }else{
-        console.log('cant find the index of the todo');
+        console.log('can\'t find the index of the todo');
       }
       console.log(...this.state.todos);
     }
   }
 
   render() {
-    const { todos } = this.state;
+    const { todos } = this.props.todos;
+    // const { todos } = this.state;
     const listItems = todos.map((todo, index) => {
       return (
         <ListItem 
@@ -95,24 +99,26 @@ class App extends Component {
       );
     });
     return (
-      <MuiThemeProvider>
-        <div>
-          <h1>medium-realtime-todo</h1>
-          <Divider />
-          <TextField 
-            hintText = "Add New Item"
-            floatingLabelText = "Enter the new item"
-            ref = "newTodo" 
-            onChange = {this.handleTextFieldChange}
-            onKeyUp = {this.handleTextFieldKeyUp}
-          />
-          <List>
-            {listItems}
-          </List>
-        </div>
-      </MuiThemeProvider>
+      <div>
+        <h1>medium-realtime-todo</h1>
+        <Divider />
+        <TextField 
+          hintText = "Add New Item"
+          floatingLabelText = "Enter the new item"
+          ref = "newTodo" 
+          onChange = {this.handleTextFieldChange}
+          onKeyUp = {this.handleTextFieldKeyUp}
+        />
+        <List>
+          {listItems}
+        </List>
+      </div>
     );
   }
 }
 
-export default App;
+const mapStateToProps = ({ todos }) => ({
+  todos,
+});
+
+export default connect(mapStateToProps)(App);
