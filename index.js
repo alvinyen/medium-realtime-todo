@@ -19,6 +19,9 @@ app.use(bodyParser.urlencoded({ extend: true }));
 const io = socketIo(server);
 io.on('connection', (socket) => {
   console.log(`${socket.id} is connecting`);
+  socket.on('disconnect', () => {
+    console.log(`${socket.id} disconnected`);
+  });
 });
 
 server.listen(3000);

@@ -13,3 +13,10 @@
 <hr>
 
 ## 『 2.  』
+client
+    修改text decoration的方式
+    get the id from Material-UI ListItem
+    bind的使用 (bind this和不bind this的差別)
+        ![](https://i.imgur.com/VHUUuiZ.png)
+server
+    encoded json

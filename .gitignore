@@ -1,3 +1,5 @@
+config/
+
 .sass-cache/
 *.css.map
 
