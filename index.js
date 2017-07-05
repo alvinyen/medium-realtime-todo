@@ -55,6 +55,19 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log(`${socket.id} disconnected`);
   });
+
+  socket.on('addTodo', (todo) => {
+    // console.dir(todo);
+    const newTodoItem = new TodoModel({
+      id: todo.id,
+      title: todo.title,
+      completed: todo.completed,
+    });
+    newTodoItem.save((err, result) => {
+      if (err) { console.log('add new todo item failed'); return; }
+      io.sockets.emit('todoAdded', todo);
+    });
+  });
 });
 
 server.listen(3000);

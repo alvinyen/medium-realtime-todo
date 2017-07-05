@@ -20,3 +20,14 @@ client
         ![](https://i.imgur.com/VHUUuiZ.png)
 server
     encoded json
+
+immutable
+    List 相當於 Array
+
+物件的取代比array方便，因為不用煩惱index
+    ```
+        {
+            ...state,
+            欲取代的物件欄位: newValue,
+        }
+    ```

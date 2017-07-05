@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import io from 'socket.io-client';
 
 import { loadInitialDataSocket } from './../redux/actions/todos';
+import { addNewTodoSocket, addTodo } from './../redux/actions/todo';
 
 import { Divider, TextField, RaisedButton } from 'material-ui';
 import { List, ListItem } from 'material-ui/List';
@@ -15,30 +16,35 @@ const markCompleteStyle = {
   textDecoration: 'line-through'
 };
 
-const todosData = [
-  { id: 0, title: 'test1', completed: false },
-  { id: 1, title: 'test2', completed: false },
-  { id: 2, title: 'test3', completed: false },
-  { id: 3, title: 'test4', completed: false },
-  { id: 4, title: 'test5', completed: false },
-];
+// const todosData = [
+//   { id: 0, title: 'test1', completed: false },
+//   { id: 1, title: 'test2', completed: false },
+//   { id: 2, title: 'test3', completed: false },
+//   { id: 3, title: 'test4', completed: false },
+//   { id: 4, title: 'test5', completed: false },
+// ];
 
 class App extends Component {
   constructor(props) {
     super(props);
   }
 
-  state = {
-    todos: []
-  };
+  // state = {
+  //   todos: []
+  // };
 
   componentDidMount = () => {
+    const { dispatch } = this.props;
     this.socket = io('/');
-    this.props.dispatch(loadInitialDataSocket(this.socket));
+    dispatch(loadInitialDataSocket(this.socket));
     // this.socket.on('initialList', (resultArray) => {
     //   // console.log(resultArray);
     //   this.setState({ todos: resultArray });
     // });
+    this.socket.on('todoAdded', (todo) => {
+      console.dir(todo);
+      dispatch(addTodo(todo));
+    });
   }
   
   componentWillUnmount = () => {
@@ -55,9 +61,10 @@ class App extends Component {
     if(event.keyCode === 13){
       // console.log(value);
       if(value){
-        const newTodoId = this.state.todos[this.state.todos.length-1].id + 1; 
-        const todo = { id: newTodoId, title: value, completed: false };
-        this.setState({ todos: [...this.state.todos, todo] });
+        const newTodoId = this.props.todos.todos.get(this.props.todos.todos.size - 1).id + 1; 
+        // const todo = { id: newTodoId, title: value, completed: false };
+        // this.setState({ todos: [...this.state.todos, todo] });
+        this.props.dispatch(addNewTodoSocket(this.socket, newTodoId, value));
         event.target.value = '';    
       }else{
         alert('Item should not be blank!');
